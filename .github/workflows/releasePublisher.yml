@@ -1,0 +1,27 @@
+name: Release Publisher
+
+on:
+  release:
+    types: published
+
+jobs:
+  versionIncrementer:
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@v1
+      - run: git checkout master
+
+      - run: ./doincrementversion
+
+      - name: git commit
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action - Version Incrementer"
+          git remote set-url origin "https://${{ github.actor }}:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git"
+
+          git add outputredirector/build.gradle
+
+          if git commit -m "PostRelease version increment"
+          then
+            git push
+          fi
