@@ -47,4 +47,8 @@ public final class OutputRedirector {
   }
 
   public static native void redirect(@NonNull String stdout, @NonNull String stderr);
+
+  public static native void redirectStdout(@NonNull String stdout);
+
+  public static native void redirectStderr(@NonNull String stderr);
 }

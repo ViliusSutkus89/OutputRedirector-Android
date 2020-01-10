@@ -29,3 +29,21 @@ Java_com_viliussutkus89_android_outputredirector_OutputRedirector_redirect(JNIEn
     freopen(stdout_c.c_str(), "w+", stdout);
     freopen(stderr_c.c_str(), "w+", stderr);
 }
+
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_viliussutkus89_android_outputredirector_OutputRedirector_redirectStdout(JNIEnv *env,
+                                                                                 jclass,
+                                                                                 jstring input) {
+    CCharGC input_c(env, input);
+    freopen(input_c.c_str(), "w+", stdout);
+}
+
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_viliussutkus89_android_outputredirector_OutputRedirector_redirectStderr(JNIEnv *env,
+                                                                                 jclass,
+                                                                                 jstring input) {
+    CCharGC input_c(env, input);
+    freopen(input_c.c_str(), "w+", stderr);
+}
