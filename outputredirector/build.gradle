@@ -36,6 +36,8 @@ android {
         versionName project.version
 
         archivesBaseName = rootProject.name
+
+        externalNativeBuild.cmake.arguments "-DANDROID_STL=c++_shared"
     }
     externalNativeBuild.cmake {
         path "src/main/cpp/CMakeLists.txt"
