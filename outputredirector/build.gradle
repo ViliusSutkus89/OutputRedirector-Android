@@ -41,7 +41,7 @@ android {
         path "src/main/cpp/CMakeLists.txt"
         version "3.10.2"
     }
-    ndkVersion "20.1.5948944"
+    ndkVersion "22.0.7026061"
 }
 
 task sourceJar(type: Jar) {
