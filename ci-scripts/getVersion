@@ -32,7 +32,9 @@ if __name__ == '__main__':
         exit(os.EX_USAGE)
 
     version = Versioner().version_name
-    if ci:
-        print(f'::set-output name=version::{version}')
+    github_output = os.getenv('GITHUB_OUTPUT', False)
+    if ci and github_output:
+        with open(github_output, 'a') as outputFile:
+            outputFile.write(f'version={version}\n')
     else:
         print(version)

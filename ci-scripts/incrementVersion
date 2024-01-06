@@ -52,6 +52,9 @@ if __name__ == '__main__':
         exit(os.EX_USAGE)
 
     new_version_name = versioner.version_name
-    print(f'::set-output name=oldVersionName::{old_version_name}')
-    print(f'::set-output name=newVersionName::{new_version_name}')
-    print(f'::set-output name=files::{versioner.version_file}')
+    github_output = os.getenv('GITHUB_OUTPUT', False)
+    if github_output:
+        with open(github_output, 'a') as outputFile:
+            outputFile.write(f'oldVersionName={old_version_name}\n')
+            outputFile.write(f'newVersionName={new_version_name}\n')
+            outputFile.write(f'files={versioner.version_file}\n')
