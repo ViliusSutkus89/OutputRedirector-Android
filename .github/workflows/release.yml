@@ -1,0 +1,65 @@
+name: release
+on:
+  workflow_dispatch:
+
+permissions:
+  actions: none
+  checks: none
+  contents: write
+  deployments: none
+  issues: none
+  packages: none
+  pull-requests: none
+  repository-projects: none
+  security-events: none
+  statuses: none
+
+jobs:
+  releaseSonatype:
+    environment: LibraryKeyAndSonatypeAccess
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # A branch is required for post release version increment commit
+          ref: ${{ github.event.ref }}
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+      - uses: android-actions/setup-android@v3
+      - run: sdkmanager "ndk;23.2.8568313"
+
+      - run: ./gradlew lintRelease publishToMavenLocal
+
+      - run: ./gradlew publishToSonatype closeAndReleaseSonatypeStagingRepository
+        env:
+          ORG_GRADLE_PROJECT_sonatypeUsername: ${{ secrets.SONATYPE_USERNAME }}
+          ORG_GRADLE_PROJECT_sonatypePassword: ${{ secrets.SONATYPE_PASSWORD }}
+          SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
+          SIGNING_PASS: ${{ secrets.SIGNING_PASS }}
+
+      - run: ./ci-scripts/updateDownstreamVersion
+        id: updateDownstreamVersion
+
+      - name: Create GitHub Release
+        uses: ncipollo/release-action@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          tag: "v${{ steps.updateDownstreamVersion.outputs.version }}"
+          name: "${{ github.event.repository.name }} v${{ steps.updateDownstreamVersion.outputs.version }}"
+          bodyFile: "UpcomingReleaseNotes.md"
+
+      - run: ./ci-scripts/incrementVersion --patch
+        id: postReleaseVersionIncrement
+
+      - uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "Post release library version increment to ${{ steps.postReleaseVersionIncrement.outputs.newVersion }} (from ${{ steps.postReleaseVersionIncrement.outputs.oldVersion }})"
+          file_pattern: ${{ steps.postReleaseVersionIncrement.outputs.files }}
+
+      - run: echo -n > UpcomingReleaseNotes.md
+      - uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "Post release truncation of UpcomingReleaseNotes.md"
+          file_pattern: UpcomingReleaseNotes.md

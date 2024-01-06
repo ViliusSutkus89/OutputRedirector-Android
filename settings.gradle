@@ -1,2 +1,0 @@
-include ':outputredirector'
-rootProject.name='outputredirector-android'

@@ -29,7 +29,6 @@ import java.io.File;
 
 public final class OutputRedirector {
   static {
-    System.loadLibrary("c++_shared");
     System.loadLibrary("outputredirector");
   }
 
