@@ -39,12 +39,15 @@ jobs:
           SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
           SIGNING_PASS: ${{ secrets.SIGNING_PASS }}
 
+      - run: ./ci-scripts/getVersion --ci
+        id: getVersion
+
       - name: Create GitHub Release
         uses: ncipollo/release-action@v1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           tag: "v${{ steps.updateDownstreamVersion.outputs.version }}"
-          name: "${{ github.event.repository.name }} v${{ steps.updateDownstreamVersion.outputs.version }}"
+          name: "${{ github.event.repository.name }} v${{ steps.getVersion.outputs.version }}"
           bodyFile: "UpcomingReleaseNotes.md"
 
       - run: ./ci-scripts/incrementVersion --patch

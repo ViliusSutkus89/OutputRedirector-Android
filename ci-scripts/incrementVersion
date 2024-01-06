@@ -55,6 +55,6 @@ if __name__ == '__main__':
     github_output = os.getenv('GITHUB_OUTPUT', False)
     if github_output:
         with open(github_output, 'a') as outputFile:
-            outputFile.write(f'oldVersionName={old_version_name}\n')
-            outputFile.write(f'newVersionName={new_version_name}\n')
+            outputFile.write(f'oldVersion={old_version_name}\n')
+            outputFile.write(f'newVersion={new_version_name}\n')
             outputFile.write(f'files={versioner.version_file}\n')
