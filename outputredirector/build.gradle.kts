@@ -94,3 +94,9 @@ afterEvaluate {
         }
     }
 }
+
+tasks.getByName("clean") {
+    doLast {
+        projectDir.resolve(".cxx").deleteRecursively()
+    }
+}
